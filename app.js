@@ -18,18 +18,7 @@ const data = "This is the payload data";
 
 app.post("/sensordata", (req, res) => {
   const data = req.body; // Access the sent data from EMQX
-  res.status(200).send({ message: "Data received", data: data });
-
-  console.log(`Received Payload: ${data.toString()}`);
-
-  // Append the data to the log file
-  fs.appendFile('payload_log.txt', `${data}\n`, (err) => {
-    if (err) {
-        console.error('Error writing to file:', err);
-    } else {
-        console.log('Data saved to log file!');
-    }
-  });
+  res.status(200).send({ message: "Data received ${data.toString()}", data: data });
 
 });
 
