@@ -40,10 +40,7 @@ const DataModel = mongoose.model('Data', dataSchema);
 // Function to insert data
 const insertData = async (data_depth, data_temp) => {
   try {
-      const newData = new DataModel({
-          temp: data_temp,
-          depth: data_depth
-      });
+      const newData = new DataModel({ data_temp, data_depth });
 
       const savedData = await newData.save();
       console.log('Data saved:', savedData);
@@ -55,6 +52,7 @@ const insertData = async (data_depth, data_temp) => {
   }
 };
 
+insertData(7, 98);
 
 app.post("/sensordata", (req, res) => {
   const data = req.body; // Access the sent data from EMQX
@@ -73,8 +71,6 @@ const server = app.listen(port, () => console.log(`Server listening on port ${po
 
 server.keepAliveTimeout = 120 * 1000;
 server.headersTimeout = 120 * 1000;
-
-insertData(7, 98);
 
 const html = `
 <!DOCTYPE html>
