@@ -16,6 +16,8 @@ app.get("/status", (req, res) => {
 app.get("/sensordata", (req, res) => {
   const data = req.body; // Access the sent data from EMQX
   res.status(201).send({ message: "Data received", data: data });
+
+  console.log(`Received Payload: ${data.toString()}`)
 });
 
 const server = app.listen(port, () => console.log(`Server listening on port ${port}!`));
