@@ -12,12 +12,25 @@ app.get("/status", (req, res) => {
     res.send(status);
 });
 
+const fs = require('fs');
+// Data to be logged
+const data = "This is the payload data";
 
 app.get("/sensordata", (req, res) => {
   const data = req.body; // Access the sent data from EMQX
   res.status(201).send({ message: "Data received", data: data });
 
-  console.log(`Received Payload: ${data.toString()}`)
+  console.log(`Received Payload: ${data.toString()}`);
+
+  // Append the data to the log file
+  fs.appendFile('payload_log.txt', `${data}\n`, (err) => {
+    if (err) {
+        console.error('Error writing to file:', err);
+    } else {
+        console.log('Data saved to log file!');
+    }
+  });
+
 });
 
 const server = app.listen(port, () => console.log(`Server listening on port ${port}!`));
