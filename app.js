@@ -1,6 +1,9 @@
 const express = require("express");
+const mongoose = require('mongoose');
 const app = express();
 const port = process.env.PORT || 3001;
+
+const uri = "mongodb+srv://janefindlay16:Mik6ET5GnlTjRZrg@cluster0.imfzdpt.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
 
 app.get("/", (req, res) => res.type('html').send(html));
 
@@ -12,20 +15,54 @@ app.get("/status", (req, res) => {
     res.send(status);
 });
 
-const fs = require('fs');
-// Data to be logged
-const data = "This is the payload data";
-
 app.post("/sensordata", (req, res) => {
   const data = req.body; // Access the sent data from EMQX
   res.status(200).send({ message: "Data received", data: data });
 
+  let jsonData = JSON.parse(data);
+
+  let depth = jsonData.depth_cm;
+  let temp = jsonData.temperature_C;
+
+  insertData(depth, temp);
 });
 
 const server = app.listen(port, () => console.log(`Server listening on port ${port}!`));
 
 server.keepAliveTimeout = 120 * 1000;
 server.headersTimeout = 120 * 1000;
+
+// Connect to MongoDB Atlas
+mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
+    .then(() => console.log('Connected to MongoDB Atlas'))
+    .catch(err => console.error('Error connecting to MongoDB Atlas:', err));
+
+// Define a schema for the data
+const dataSchema = new mongoose.Schema({
+    temp: Number,
+    depth: Number
+});
+
+// Create a model based on the schema
+const DataModel = mongoose.model('Data', dataSchema);
+
+// Function to insert data
+const insertData = async (data_depth, data_temp) => {
+    try {
+        const newData = new DataModel({
+            temp: data_temp,
+            depth: data_depth
+        });
+
+        const savedData = await newData.save();
+        console.log('Data saved:', savedData);
+    } catch (err) {
+        console.error('Error saving data:', err);
+    } finally {
+        // Close the connection when done
+        mongoose.connection.close();
+    }
+};
 
 const html = `
 <!DOCTYPE html>
