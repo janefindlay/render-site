@@ -18,7 +18,7 @@ const data = "This is the payload data";
 
 app.post("/sensordata", (req, res) => {
   const data = req.body; // Access the sent data from EMQX
-  res.status(200).send({ message: `Data received ${data.toString()}`, data: data });
+  res.status(200).send({ message: "Data received", data: data });
 
 });
 
