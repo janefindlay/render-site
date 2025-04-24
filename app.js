@@ -74,6 +74,7 @@ const server = app.listen(port, () => console.log(`Server listening on port ${po
 server.keepAliveTimeout = 120 * 1000;
 server.headersTimeout = 120 * 1000;
 
+insertData(7, 98);
 
 const html = `
 <!DOCTYPE html>
