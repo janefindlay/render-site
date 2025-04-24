@@ -12,6 +12,12 @@ app.get("/status", (req, res) => {
     res.send(status);
 });
 
+
+app.get("/sensordata", (req, res) => {
+  const data = req.body; // Access the sent data from EMQX
+  res.status(201).send({ message: "Data received", data: data });
+});
+
 const server = app.listen(port, () => console.log(`Server listening on port ${port}!`));
 
 server.keepAliveTimeout = 120 * 1000;
