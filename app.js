@@ -45,7 +45,7 @@ const insertData = async (data_depth, data_temp) => {
       const savedData = await newData.save();
       console.log('Data saved:', savedData);
   } catch (err) {
-      console.error('Error saving data:', err);
+      console.log('Error saving data:', err);
   }
 };
 
@@ -54,10 +54,12 @@ insertData(7, 98);
 app.post("/sensordata", (req, res) => {
   const data = req.body; // Access the sent data from EMQX
   
-  let jsonData = JSON.parse(data);
+  //let jsonData = JSON.parse(data);
 
-  let depth = jsonData.depth_cm;
-  let temp = jsonData.temperature_C;
+  console.log(data);
+
+  let depth = data.depth_cm;
+  let temp = data.temperature_C;
 
   insertData(depth, temp);
 
