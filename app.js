@@ -54,8 +54,6 @@ const insertData = async (data_depth, data_temp) => {
   }
 };
 
-insertData(7, 98);
-
 app.post("/sensordata", (req, res) => {
   const data = req.body; // Access the sent data from EMQX
   
