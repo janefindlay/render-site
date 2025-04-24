@@ -40,15 +40,12 @@ const DataModel = mongoose.model('Data', dataSchema);
 // Function to insert data
 const insertData = async (data_depth, data_temp) => {
   try {
-      const newData = new DataModel({ data_temp, data_depth });
+      const newData = new DataModel({ temp: data_temp, depth: data_depth });
 
       const savedData = await newData.save();
       console.log('Data saved:', savedData);
   } catch (err) {
       console.error('Error saving data:', err);
-  } finally {
-      // Close the connection when done
-      mongoose.connection.close();
   }
 };
 
