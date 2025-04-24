@@ -16,9 +16,9 @@ const fs = require('fs');
 // Data to be logged
 const data = "This is the payload data";
 
-app.get("/sensordata", (req, res) => {
+app.post("/sensordata", (req, res) => {
   const data = req.body; // Access the sent data from EMQX
-  res.status(201).send({ message: "Data received", data: data });
+  res.status(200).send({ message: "Data received", data: data });
 
   console.log(`Received Payload: ${data.toString()}`);
 
