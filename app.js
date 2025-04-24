@@ -1,9 +1,14 @@
 const express = require("express");
 const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
 const app = express();
 const port = process.env.PORT || 3001;
 
 const uri = "mongodb+srv://janefindlay16:Mik6ET5GnlTjRZrg@cluster0.imfzdpt.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: true}));
 
 app.get("/", (req, res) => res.type('html').send(html));
 
