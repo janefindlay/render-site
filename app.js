@@ -57,26 +57,20 @@ app.post("/sensordata", (req, res) => {
   res.status(200).send({ message: "Data received", data: data });
 });
 
+app.get('/api/data/latest', async (req, res) => {
+  try {
+      const latestData = await DataModel.findOne().sort({ _id: -1 });
+      res.status(200).json(latestData); // Send the most recent data
+  } catch (error) {
+      console.error('Error fetching latest data:', error);
+      res.status(500).send('Error fetching latest data');
+  }
+});
+
 const server = app.listen(port, () => console.log(`Server listening on port ${port}!`));
 
 server.keepAliveTimeout = 120 * 1000;
 server.headersTimeout = 120 * 1000;
-
-// Add logic to continously update the depth and length
-const fetchData = async () => {
-  try {
-    const response = await DataModel.findOne.sort({_id: -1});
-    const data = response.json(); 
-
-    const container = document.getElementById('data-container');
-    container.textContent = `Depth: ${data.depth}, Temp: ${data.temp}`;
-  } catch (error) {
-    console.error('Error fetching data:', error);
-    document.getElementById('data-container').textContent = 'Error fetching data';
-  }
-}
-
-fetchData();
 
 const html = `
 <!DOCTYPE html>
@@ -127,7 +121,23 @@ const html = `
     </section>
     <section>
       <p>Sensor Data</p>
-      <div id="data-container>Loading...</div>
+      <div id="data-container">Loading...</div>
+      <script>
+        const fetchLatestData = async () => {
+            try {
+                const response = await fetch('https://render-site-ttp7.onrender.com/data/latest'); // Update with your server URL
+                const data = await response.json();
+
+                const container = document.getElementById('data-container');
+                container.textContent = `Depth: ${data.depth}, Temp: ${data.temp}`;
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                document.getElementById('data-container').textContent = 'Error fetching data';
+            }
+        };
+
+        fetchLatestData(); // Fetch and display data
+      </script>
     </section>
   </body>
 </html>
