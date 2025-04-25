@@ -10,7 +10,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.get("/", (req, res) => {
-  const filePath = path.join(__dirname, "index.html"); // Path to the HTML file
+  const filePath = path.join(__dirname, "main.html"); // Path to the HTML file
   fs.readFile(filePath, "utf8", (err, data) => {
       if (err) {
           console.error("Error reading the HTML file:", err);
