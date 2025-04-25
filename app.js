@@ -66,6 +66,19 @@ app.get('/api/data/latest', async (req, res) => {
   }
 });
 
+const fetchLatestData = async () => {
+  try {
+      const response = await fetch('https://render-site-ttp7.onrender.com/data/latest'); // Update with your server URL
+      const data = await response.json();
+
+      const container = document.getElementById('data-container');
+      container.innerHTML = `${data}`;
+  } catch (error) {
+      console.error('Error fetching data:', error);
+      document.getElementById('data-container').textContent = 'Error fetching data';
+  }
+};
+
 const server = app.listen(port, () => console.log(`Server listening on port ${port}!`));
 
 server.keepAliveTimeout = 120 * 1000;
@@ -123,21 +136,7 @@ const html = `
       <div id="data-container">Loading...</div>
     </section>
   </body>
-  <script>
-    const fetchLatestData = async () => {
-        try {
-            const response = await fetch('https://render-site-ttp7.onrender.com/data/latest'); // Update with your server URL
-            const data = await response.json();
-
-            const container = document.getElementById('data-container');
-            container.textContent = `${data}`;
-        } catch (error) {
-            console.error('Error fetching data:', error);
-            document.getElementById('data-container').textContent = 'Error fetching data';
-        }
-    };
-
-    fetchLatestData(); // Fetch and display data
-  </script>
 </html>
 `
+
+fetchLatestData(); // Fetch and display data
