@@ -55,7 +55,7 @@
                 const data = await response.json();
 
                 const container = document.getElementById('data-container');
-                container.innerHTML = `${data}`;
+                container.innerHTML = `Depth : ${data.depth}, Temp: ${data.temp}`;
             } catch (error) {
                 console.error('Error fetching data:', error);
                 document.getElementById('data-container').textContent = 'Error fetching data';
