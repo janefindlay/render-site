@@ -9,7 +9,18 @@ const uri = "mongodb+srv://janefindlay16:Mik6ET5GnlTjRZrg@cluster0.imfzdpt.mongo
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.get("/", (req, res) => res.type('html').send(html));
+app.get("/", (req, res) => {
+  const filePath = path.join(__dirname, "index.html"); // Path to the HTML file
+  fs.readFile(filePath, "utf8", (err, data) => {
+      if (err) {
+          console.error("Error reading the HTML file:", err);
+          res.status(500).send("Error loading page");
+      } else {
+          res.type("html").send(data); // Send the file content
+      }
+  });
+});
+
 
 app.get("/status", (req, res) => {
     const status = {
