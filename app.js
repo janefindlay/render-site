@@ -57,23 +57,25 @@ app.post("/sensordata", (req, res) => {
   res.status(200).send({ message: "Data received", data: data });
 });
 
-app.get('/data', async (req, res) => {
-  try {
-    const data = await DataModel.find({}); // Fetch all documents
-    res.status(200).json(data); // Send data as JSON to the client
-  } catch (err) {
-      console.error('Error fetching data:', err);
-      res.status(500).send('Error fetching data');
-  }
-});
-
 const server = app.listen(port, () => console.log(`Server listening on port ${port}!`));
 
 server.keepAliveTimeout = 120 * 1000;
 server.headersTimeout = 120 * 1000;
 
 // Add logic to continously update the depth and length
+const fetchData = async () => {
+  try {
+    const data = await DataModel.findOne.sort({_id: -1}).json(); 
 
+    const container = document.getElementById('data-container');
+    container.textContent = `Depth: ${data.depth}, Temp: ${data.temp}`;
+  } catch (error) {
+    console.error('Error fetching data:', error);
+    document.getElementById('data-container').textContent = 'Error fetching data';
+  }
+}
+
+fetchData();
 
 const html = `
 <!DOCTYPE html>
@@ -122,8 +124,10 @@ const html = `
     <section>
       Tank Monitor
     </section>
-    <p>Depth : </p>
-    <p>Temp : </p>
+    <section>
+      <p>Sensor Data</p>
+      <div id="data-container>Loading...</div>
+    </section>
   </body>
 </html>
 `
