@@ -69,7 +69,7 @@ app.post("/sensordata", (req, res) => {
   res.status(200).send({ message: "Data received", data: data });
 });
 
-app.get('/api/data/latest', async (req, res) => {
+app.get('/data/latest', async (req, res) => {
   try {
       const latestData = await DataModel.findOne().sort({ _id: -1 });
       res.status(200).json(latestData); // Send the most recent data
