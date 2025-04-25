@@ -1,14 +1,13 @@
 const express = require("express");
 const mongoose = require('mongoose');
-const bodyParser = require('body-parser');
 const app = express();
 const port = process.env.PORT || 3001;
 
 const uri = "mongodb+srv://janefindlay16:Mik6ET5GnlTjRZrg@cluster0.imfzdpt.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
 
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: true}));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 app.get("/", (req, res) => res.type('html').send(html));
 
@@ -122,23 +121,23 @@ const html = `
     <section>
       <p>Sensor Data</p>
       <div id="data-container">Loading...</div>
-      <script>
-        const fetchLatestData = async () => {
-            try {
-                const response = await fetch('https://render-site-ttp7.onrender.com/data/latest'); // Update with your server URL
-                const data = await response.json();
-
-                const container = document.getElementById('data-container');
-                container.textContent = `Depth: ${data.depth}, Temp: ${data.temp}`;
-            } catch (error) {
-                console.error('Error fetching data:', error);
-                document.getElementById('data-container').textContent = 'Error fetching data';
-            }
-        };
-
-        fetchLatestData(); // Fetch and display data
-      </script>
     </section>
   </body>
+  <script>
+    const fetchLatestData = async () => {
+        try {
+            const response = await fetch('https://render-site-ttp7.onrender.com/data/latest'); // Update with your server URL
+            const data = await response.json();
+
+            const container = document.getElementById('data-container');
+            container.textContent = `${data}`;
+        } catch (error) {
+            console.error('Error fetching data:', error);
+            document.getElementById('data-container').textContent = 'Error fetching data';
+        }
+    };
+
+    fetchLatestData(); // Fetch and display data
+  </script>
 </html>
 `
