@@ -2,17 +2,6 @@
 <html>
   <head>
     <title>Tank Monitor</title>
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
-    <script>
-      setTimeout(() => {
-        confetti({
-          particleCount: 100,
-          spread: 70,
-          origin: { y: 0.6 },
-          disableForReducedMotion: true
-        });
-      }, 500);
-    </script>
     <style>
       @import url("https://p.typekit.net/p.css?s=1&k=vnd5zic&ht=tk&f=39475.39476.39477.39478.39479.39480.39481.39482&a=18673890&app=typekit&e=css");
       @font-face {
@@ -45,7 +34,6 @@
       Tank Monitor
     </section>
     <section>
-      <p>Sensor Data</p>
       <div id="data-container">Loading...</div>
 
       <script>
@@ -55,14 +43,16 @@
                 const data = await response.json();
 
                 const container = document.getElementById('data-container');
-                container.innerHTML = `Depth : ${data.depth}, Temp: ${data.temp}`;
+                container.innerHTML = `Depth : ${data.depth} cm, Temp: ${data.temp} °C`;
             } catch (error) {
                 console.error('Error fetching data:', error);
                 document.getElementById('data-container').textContent = 'Error fetching data';
             }
         };
 
-        fetchLatestData(); // Fetch and display data
+        setInterval(fetchLatestData, 5000);
+
+        fetchLatestData(); // Fetch and display data on page load
       </script>
     </section>
   </body>
