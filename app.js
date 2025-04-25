@@ -25,14 +25,6 @@ mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => console.log('Connected to MongoDB Atlas'))
     .catch(err => console.error('Error connecting to MongoDB Atlas:', err));
 
-mongoose.connection.on('error', (err) => {
-  console.error('Database connection error:', err);
-});
-mongoose.connection.on('connected', () => {
-  console.log('Database connected');
-});
-  
-
 // Define a schema for the data
 const dataSchema = new mongoose.Schema({
     temp: Number,
@@ -56,10 +48,6 @@ const insertData = async (data_depth, data_temp) => {
 
 app.post("/sensordata", (req, res) => {
   const data = req.body; // Access the sent data from EMQX
-  
-  //let jsonData = JSON.parse(data);
-
-  console.log(data);
 
   let depth = data.depth_cm;
   let temp = data.temperature_C;
@@ -69,16 +57,29 @@ app.post("/sensordata", (req, res) => {
   res.status(200).send({ message: "Data received", data: data });
 });
 
+app.get('/data', async (req, res) => {
+  try {
+    const data = await DataModel.find({}); // Fetch all documents
+    res.status(200).json(data); // Send data as JSON to the client
+  } catch (err) {
+      console.error('Error fetching data:', err);
+      res.status(500).send('Error fetching data');
+  }
+});
+
 const server = app.listen(port, () => console.log(`Server listening on port ${port}!`));
 
 server.keepAliveTimeout = 120 * 1000;
 server.headersTimeout = 120 * 1000;
 
+// Add logic to continously update the depth and length
+
+
 const html = `
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Hello from Render!</title>
+    <title>Tank Monitor</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <script>
       setTimeout(() => {
@@ -119,8 +120,10 @@ const html = `
   </head>
   <body>
     <section>
-      Hello from Render!
+      Tank Monitor
     </section>
+    <p>Depth : </p>
+    <p>Temp : </p>
   </body>
 </html>
 `
