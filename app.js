@@ -65,7 +65,8 @@ server.headersTimeout = 120 * 1000;
 // Add logic to continously update the depth and length
 const fetchData = async () => {
   try {
-    const data = await DataModel.findOne.sort({_id: -1}).json(); 
+    const response = await DataModel.findOne.sort({_id: -1});
+    const data = response.json(); 
 
     const container = document.getElementById('data-container');
     container.textContent = `Depth: ${data.depth}, Temp: ${data.temp}`;
