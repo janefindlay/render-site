@@ -49,6 +49,7 @@ const DataModel = mongoose.model('Data', dataSchema);
 // Function to insert data
 const insertData = async (data_depth, data_temp) => {
   try {
+      console.log('try to insert data');
       const newData = new DataModel({ temp: data_temp, depth: data_depth });
 
       const savedData = await newData.save();
@@ -61,16 +62,21 @@ const insertData = async (data_depth, data_temp) => {
 app.post("/sensordata", (req, res) => {
   const data = req.body; // Access the sent data from EMQX
 
+  console.log('data: ' + data);
+
   let depth = data.depth_cm;
   let temp = data.temperature_C;
 
   insertData(depth, temp);
+
+  console.log('Received data on /sensordata');
 
   res.status(200).send({ message: "Data received", data: data });
 });
 
 app.get('/data/latest', async (req, res) => {
   try {
+      console.log('try to read /data/latest');
       const latestData = await DataModel.findOne().sort({ _id: -1 });
       res.status(200).json(latestData); // Send the most recent data
   } catch (error) {
