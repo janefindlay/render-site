@@ -32,6 +32,8 @@ app.get("/status", (req, res) => {
     res.send(status);
 });
 
+console.log("Server file started");
+
 // Connect to MongoDB Atlas
 mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => console.log('Connected to MongoDB Atlas'))
