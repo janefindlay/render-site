@@ -41,9 +41,9 @@ mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
 
 // Define a schema for the data
 const dataSchema = new mongoose.Schema({
-    temp: Number,
-    depth: Number
-});
+  temp: Number,
+  depth: Number
+}, { timestamps: true });
 
 // Create a model based on the schema
 const DataModel = mongoose.model('Data', dataSchema);
