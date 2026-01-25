@@ -57,7 +57,7 @@ const insertData = async (data_depth, data_temp) => {
       const savedData = await newData.save();
       console.log('Data saved:', savedData);
   } catch (err) {
-      console.log('Error saving data:', err);
+      console.error('Error saving data:', err);
   }
 };
 
