@@ -2,56 +2,159 @@
 <html>
   <head>
     <title>Tank Monitor</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
     <style>
       @import url("https://p.typekit.net/p.css?s=1&k=vnd5zic&ht=tk&f=39475.39476.39477.39478.39479.39480.39481.39482&a=18673890&app=typekit&e=css");
       @font-face {
         font-family: "neo-sans";
-        src: url("https://use.typekit.net/af/00ac0a/00000000000000003b9b2033/27/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n7&v=3") format("woff2"), url("https://use.typekit.net/af/00ac0a/00000000000000003b9b2033/27/d?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n7&v=3") format("woff"), url("https://use.typekit.net/af/00ac0a/00000000000000003b9b2033/27/a?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n7&v=3") format("opentype");
+        src: url("https://use.typekit.net/af/00ac0a/00000000000000003b9b2033/27/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n7&v=3") format("woff2"),
+             url("https://use.typekit.net/af/00ac0a/00000000000000003b9b2033/27/d?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n7&v=3") format("woff"),
+             url("https://use.typekit.net/af/00ac0a/00000000000000003b9b2033/27/a?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n7&v=3") format("opentype");
         font-style: normal;
         font-weight: 700;
       }
-      html {
-        font-family: neo-sans;
-        font-weight: 700;
-        font-size: calc(62rem / 16);
-      }
+      * { box-sizing: border-box; margin: 0; padding: 0; }
       body {
+        font-family: neo-sans, sans-serif;
+        font-weight: 700;
         background: white;
+        padding: 2rem;
       }
-      section {
-        border-radius: 1em;
-        padding: 1em;
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        margin-right: -50%;
-        transform: translate(-50%, -50%);
+      h1 {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+      }
+      #last-updated {
+        font-size: 0.9rem;
+        font-weight: 400;
+        color: #666;
+        margin-bottom: 1.5rem;
+      }
+      .stats {
+        display: flex;
+        gap: 2rem;
+        margin-bottom: 2rem;
+      }
+      .stat {
+        background: #f5f5f5;
+        border-radius: 0.75rem;
+        padding: 1rem 1.5rem;
+      }
+      .stat-label {
+        font-size: 0.75rem;
+        color: #888;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        font-weight: 400;
+      }
+      .stat-value {
+        font-size: 1.75rem;
+        margin-top: 0.25rem;
+      }
+      .chart-container {
+        position: relative;
+        height: 400px;
       }
     </style>
   </head>
   <body>
-    <section>
-      <p>Tank Monitor</p>
-      <div id="data-container">Loading...</div>
+    <h1>Tank Monitor</h1>
+    <p id="last-updated">Loading...</p>
 
-      <script>
-        const fetchLatestData = async () => {
-            try {
-                const response = await fetch('https://render-site-ttp7.onrender.com/data/latest'); // Update with your server URL
-                const data = await response.json();
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-label">Depth</div>
+        <div class="stat-value" id="stat-depth">—</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Temperature</div>
+        <div class="stat-value" id="stat-temp">—</div>
+      </div>
+    </div>
 
-                const container = document.getElementById('data-container');
-                container.textContent = `Depth : ${data.depth} cm, Temp: ${data.temp} °C`;
-            } catch (error) {
-                console.error('Error fetching data:', error);
-                document.getElementById('data-container').textContent = 'Error fetching data';
+    <div class="chart-container">
+      <canvas id="chart"></canvas>
+    </div>
+
+    <script>
+      const BASE = 'https://render-site-ttp7.onrender.com';
+
+      const chart = new Chart(document.getElementById('chart'), {
+        type: 'line',
+        data: {
+          datasets: [
+            {
+              label: 'Depth (cm)',
+              data: [],
+              borderColor: '#2563eb',
+              backgroundColor: 'rgba(37,99,235,0.08)',
+              yAxisID: 'yDepth',
+              tension: 0.3,
+              pointRadius: 3,
+            },
+            {
+              label: 'Temperature (°C)',
+              data: [],
+              borderColor: '#dc2626',
+              backgroundColor: 'rgba(220,38,38,0.08)',
+              yAxisID: 'yTemp',
+              tension: 0.3,
+              pointRadius: 3,
             }
-        };
+          ]
+        },
+        options: {
+          animation: false,
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: { mode: 'index', intersect: false },
+          scales: {
+            x: {
+              type: 'time',
+              time: { tooltipFormat: 'dd MMM HH:mm:ss', displayFormats: { minute: 'HH:mm', hour: 'HH:mm', second: 'HH:mm:ss' } },
+              title: { display: false }
+            },
+            yDepth: {
+              type: 'linear',
+              position: 'left',
+              title: { display: true, text: 'Depth (cm)' }
+            },
+            yTemp: {
+              type: 'linear',
+              position: 'right',
+              title: { display: true, text: 'Temp (°C)' },
+              grid: { drawOnChartArea: false }
+            }
+          }
+        }
+      });
 
-        setInterval(fetchLatestData, 5000);
+      const fmt = (d) => new Date(d).toLocaleString();
 
-        fetchLatestData(); // Fetch and display data on page load
-      </script>
-    </section>
+      const refresh = async () => {
+        try {
+          const res = await fetch(`${BASE}/data/history?limit=20`);
+          const history = await res.json();
+
+          chart.data.datasets[0].data = history.map(d => ({ x: new Date(d.createdAt), y: d.depth }));
+          chart.data.datasets[1].data = history.map(d => ({ x: new Date(d.createdAt), y: d.temp }));
+          chart.update();
+
+          if (history.length > 0) {
+            const latest = history[history.length - 1];
+            document.getElementById('stat-depth').textContent = latest.depth != null ? `${latest.depth} cm` : '—';
+            document.getElementById('stat-temp').textContent = latest.temp != null ? `${latest.temp} °C` : '—';
+            document.getElementById('last-updated').textContent = `Last updated: ${fmt(latest.createdAt)}`;
+          }
+        } catch (err) {
+          console.error('Error fetching data:', err);
+          document.getElementById('last-updated').textContent = 'Error fetching data';
+        }
+      };
+
+      refresh();
+      setInterval(refresh, 5000);
+    </script>
   </body>
 </html>

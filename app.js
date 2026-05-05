@@ -78,12 +78,22 @@ app.post("/sensordata", (req, res) => {
 
 app.get('/data/latest', async (req, res) => {
   try {
-      console.log('try to read /data/latest');
       const latestData = await DataModel.findOne().sort({ _id: -1 });
-      res.status(200).json(latestData); // Send the most recent data
+      res.status(200).json(latestData);
   } catch (error) {
       console.error('Error fetching latest data:', error);
-      res.status(500).send('Error fetching latest data');
+      res.status(500).json({ error: 'Error fetching latest data' });
+  }
+});
+
+app.get('/data/history', async (req, res) => {
+  try {
+      const limit = Math.min(parseInt(req.query.limit) || 20, 100);
+      const history = await DataModel.find().sort({ _id: -1 }).limit(limit);
+      res.status(200).json(history.reverse());
+  } catch (error) {
+      console.error('Error fetching history:', error);
+      res.status(500).json({ error: 'Error fetching history' });
   }
 });
 
